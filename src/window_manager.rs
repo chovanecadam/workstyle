@@ -114,20 +114,21 @@ impl Window {
         self.name.is_some() || self.app_id.is_some() || self.window_properties_class.is_some()
     }
     pub fn matches(&self, pattern: &str) -> bool {
-        self.name
-            .as_ref()
-            .map(|s| s.to_lowercase().contains(pattern))
-            .unwrap_or(false)
-            || self
-                .app_id
+        for opt in Vec::from(vec![
+            self.name.as_ref(),
+            self.app_id.as_ref(),
+            self.window_properties_class.as_ref(),
+        ]) {
+            if opt
                 .as_ref()
-                .map(|s| s.to_lowercase().contains(pattern))
+                .map(|s| s.to_lowercase().contains(&pattern.to_lowercase()))
                 .unwrap_or(false)
-            || self
-                .window_properties_class
-                .as_ref()
-                .map(|s| s.to_lowercase().contains(pattern))
-                .unwrap_or(false)
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
 
